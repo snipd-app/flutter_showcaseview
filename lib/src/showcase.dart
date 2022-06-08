@@ -61,6 +61,8 @@ class Showcase extends StatefulWidget {
   final EdgeInsets overlayPadding;
   final VoidCallback? onTargetDoubleTap;
   final VoidCallback? onTargetLongPress;
+  final bool disableDisposeOnBackgroundClick;
+  final bool disableDisposeOnTooltipClick;
 
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
@@ -97,6 +99,8 @@ class Showcase extends StatefulWidget {
     this.radius,
     this.onTargetLongPress,
     this.onTargetDoubleTap,
+    this.disableDisposeOnBackgroundClick = false,
+    this.disableDisposeOnTooltipClick = false,
   })  : height = null,
         width = null,
         container = null,
@@ -140,6 +144,8 @@ class Showcase extends StatefulWidget {
     this.blurValue,
     this.onTargetLongPress,
     this.onTargetDoubleTap,
+    this.disableDisposeOnBackgroundClick = false,
+    this.disableDisposeOnTooltipClick = false,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -242,7 +248,7 @@ class _ShowcaseState extends State<Showcase> {
   }
 
   void _getOnTooltipTap() {
-    if (widget.disposeOnTap == true) {
+    if (!widget.disableDisposeOnTooltipClick && widget.disposeOnTap == true) {
       showCaseWidgetState.dismiss();
     }
     widget.onToolTipClick?.call();
@@ -267,7 +273,8 @@ class _ShowcaseState extends State<Showcase> {
         ? Stack(
             children: [
               GestureDetector(
-                onTap: _nextIfAny,
+                onTap:
+                    widget.disableDisposeOnBackgroundClick ? () {} : _nextIfAny,
                 child: ClipPath(
                   clipper: RRectClipper(
                     area: _isScrollRunning ? Rect.zero : rectBound,
