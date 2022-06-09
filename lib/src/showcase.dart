@@ -55,7 +55,7 @@ class Showcase extends StatefulWidget {
   final double? width;
   final Duration animationDuration;
   final VoidCallback? onToolTipClick;
-  final VoidCallback? onTargetClick;
+  final void Function(Rect)? onTargetClick;
   final bool? disposeOnTap;
   final bool? disableAnimation;
   final EdgeInsets overlayPadding;
@@ -238,12 +238,16 @@ class _ShowcaseState extends State<Showcase> {
     showCaseWidgetState.completed(widget.key);
   }
 
-  void _getOnTargetTap() {
+  void _getOnTargetTap(Rect targetRect) {
     if (widget.disposeOnTap == true) {
       showCaseWidgetState.dismiss();
-      widget.onTargetClick!();
+      widget.onTargetClick!.call(targetRect);
     } else {
-      (widget.onTargetClick ?? _nextIfAny).call();
+      if (widget.onTargetClick != null) {
+        widget.onTargetClick!.call(targetRect);
+      } else {
+        _nextIfAny.call();
+      }
     }
   }
 
@@ -312,7 +316,7 @@ class _ShowcaseState extends State<Showcase> {
                 _TargetWidget(
                   offset: offset,
                   size: size,
-                  onTap: _getOnTargetTap,
+                  onTap: () => _getOnTargetTap(rectBound),
                   onDoubleTap: widget.onTargetDoubleTap,
                   onLongPress: widget.onTargetLongPress,
                   shapeBorder: widget.shapeBorder,

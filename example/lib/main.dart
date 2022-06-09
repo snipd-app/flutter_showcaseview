@@ -309,7 +309,7 @@ class _MailPageState extends State<MailPage> {
           key: key,
           description: 'Tap to check mail',
           disposeOnTap: true,
-          onTargetClick: () {
+          onTargetClick: (rect) {
             Navigator.push<void>(
               context,
               MaterialPageRoute<void>(
