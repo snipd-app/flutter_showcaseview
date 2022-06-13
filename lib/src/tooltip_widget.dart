@@ -45,6 +45,8 @@ class ToolTipWidget extends StatefulWidget {
   final EdgeInsets? contentPadding;
   final Duration animationDuration;
   final bool disableAnimation;
+  final bool canSkip;
+  final VoidCallback onSkip;
 
   ToolTipWidget({
     required this.position,
@@ -64,6 +66,8 @@ class ToolTipWidget extends StatefulWidget {
     required this.animationDuration,
     this.contentPadding = const EdgeInsets.symmetric(vertical: 8),
     required this.disableAnimation,
+    required this.canSkip,
+    required this.onSkip,
   });
 
   @override
@@ -119,11 +123,12 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
         _textSize(widget.description!, descriptionStyle).width +
             widget.contentPadding!.right +
             widget.contentPadding!.left;
-    var maxTextWidth = max(titleLength, descriptionLength);
+    var maxTextWidth = max(titleLength, descriptionLength).toDouble();
+    final cancelButtonWidth = widget.canSkip ? 30.0 : 0;
     if (maxTextWidth > widget.screenSize!.width - 20) {
-      return widget.screenSize!.width - 20;
+      return widget.screenSize!.width - 20 + cancelButtonWidth;
     } else {
-      return maxTextWidth + 15;
+      return maxTextWidth + 15 + cancelButtonWidth;
     }
   }
 
@@ -306,42 +311,61 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                             width: _getTooltipWidth(),
                             padding: widget.contentPadding,
                             color: widget.tooltipColor,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: widget.title != null
-                                      ? CrossAxisAlignment.start
-                                      : CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    widget.title != null
-                                        ? Text(
-                                            widget.title!,
-                                            style: widget.titleTextStyle ??
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        crossAxisAlignment: widget.title != null
+                                            ? CrossAxisAlignment.start
+                                            : CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          widget.title != null
+                                              ? Text(
+                                                  widget.title!,
+                                                  style:
+                                                      widget.titleTextStyle ??
+                                                          Theme.of(context)
+                                                              .textTheme
+                                                              .headline6!
+                                                              .merge(
+                                                                TextStyle(
+                                                                  color: widget
+                                                                      .textColor,
+                                                                ),
+                                                              ),
+                                                )
+                                              : SizedBox(),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            widget.description!,
+                                            style: widget.descTextStyle ??
                                                 Theme.of(context)
                                                     .textTheme
-                                                    .headline6!
+                                                    .subtitle2!
                                                     .merge(
                                                       TextStyle(
                                                         color: widget.textColor,
                                                       ),
                                                     ),
-                                          )
-                                        : SizedBox(),
-                                    Text(
-                                      widget.description!,
-                                      style: widget.descTextStyle ??
-                                          Theme.of(context)
-                                              .textTheme
-                                              .subtitle2!
-                                              .merge(
-                                                TextStyle(
-                                                  color: widget.textColor,
-                                                ),
-                                              ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                if (widget.canSkip)
+                                  GestureDetector(
+                                    onTap: widget.onSkip,
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.grey,
                                     ),
-                                  ],
-                                )
+                                  )
                               ],
                             ),
                           ),

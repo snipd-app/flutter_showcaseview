@@ -63,6 +63,8 @@ class Showcase extends StatefulWidget {
   final VoidCallback? onTargetLongPress;
   final bool disableDisposeOnBackgroundClick;
   final bool disableDisposeOnTooltipClick;
+  final bool canSkip;
+  final VoidCallback? onSkip;
 
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
@@ -101,6 +103,8 @@ class Showcase extends StatefulWidget {
     this.onTargetDoubleTap,
     this.disableDisposeOnBackgroundClick = false,
     this.disableDisposeOnTooltipClick = false,
+    this.canSkip = false,
+    this.onSkip,
   })  : height = null,
         width = null,
         container = null,
@@ -146,6 +150,8 @@ class Showcase extends StatefulWidget {
     this.onTargetDoubleTap,
     this.disableDisposeOnBackgroundClick = false,
     this.disableDisposeOnTooltipClick = false,
+    this.canSkip = false,
+    this.onSkip,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -341,6 +347,11 @@ class _ShowcaseState extends State<Showcase> {
                   disableAnimation: widget.disableAnimation ??
                       showCaseWidgetState.disableAnimation,
                   animationDuration: widget.animationDuration,
+                  canSkip: widget.canSkip,
+                  onSkip: () {
+                    _nextIfAny();
+                    widget.onSkip?.call();
+                  },
                 ),
             ],
           )

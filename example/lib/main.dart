@@ -178,7 +178,9 @@ class _MailPageState extends State<MailPage> {
                                   children: <Widget>[
                                     Showcase(
                                       key: _one,
+                                      title: 'Menu',
                                       description: 'Tap to see menu options',
+                                      canSkip: true,
                                       child: Icon(
                                         Icons.menu,
                                         color: Theme.of(context).primaryColor,
