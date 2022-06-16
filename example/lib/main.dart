@@ -185,7 +185,7 @@ class _MailPageState extends State<MailPage> {
                                       disableDisposeOnTooltipClick: true,
                                       disableDisposeOnBackgroundClick: true,
                                       tooltipAppearingDelay:
-                                          const Duration(seconds: 2),
+                                          const Duration(seconds: 5),
                                       highlightTargetRegionWithColorOnBackgroundClick:
                                           Colors.amber,
                                       child: Icon(

@@ -200,13 +200,20 @@ class _ShowcaseState extends State<Showcase> {
       _showShowCase = showShowCase;
       if (showShowCase) {
         _showShowCaseTooltip = false;
+        _isHighlightingTargetRegion = false;
       }
     });
-    Future.delayed(widget.tooltipAppearingDelay, () {
-      setState(() {
-        _showShowCaseTooltip = showShowCase;
+    if (_showShowCaseTooltip != _showShowCase) {
+      Future.delayed(widget.tooltipAppearingDelay, () {
+        if (widget.highlightTargetRegionWithColorOnBackgroundClick != null) {
+          _highlightTargetRegionAndShowTooltipIfNotShown();
+        } else {
+          setState(() {
+            _showShowCaseTooltip = showShowCase;
+          });
+        }
       });
-    });
+    }
 
     if (activeStep == widget.key) {
       _scrollIntoView();
@@ -281,7 +288,7 @@ class _ShowcaseState extends State<Showcase> {
     if (!widget.disableDisposeOnTooltipClick && widget.disposeOnTap == true) {
       showCaseWidgetState.dismiss();
     } else if (widget.highlightTargetRegionWithColorOnBackgroundClick != null) {
-      _highlightTargetRegion();
+      _highlightTargetRegionAndShowTooltipIfNotShown();
     }
 
     widget.onToolTipClick?.call();
@@ -309,7 +316,7 @@ class _ShowcaseState extends State<Showcase> {
                 onTap: widget.disableDisposeOnBackgroundClick
                     ? widget.highlightTargetRegionWithColorOnBackgroundClick !=
                             null
-                        ? _highlightTargetRegion
+                        ? _highlightTargetRegionAndShowTooltipIfNotShown
                         : () {}
                     : _nextIfAny,
                 child: ClipPath(
@@ -391,10 +398,10 @@ class _ShowcaseState extends State<Showcase> {
         : SizedBox.shrink();
   }
 
-  void _highlightTargetRegion() {
+  void _highlightTargetRegionAndShowTooltipIfNotShown() {
     setState(() {
-      _isHighlightingTargetRegion = true;
       _showShowCaseTooltip = _showShowCase;
+      _isHighlightingTargetRegion = true;
     });
     Future.delayed(const Duration(milliseconds: 200), () {
       setState(() {
