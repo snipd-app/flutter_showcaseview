@@ -54,6 +54,7 @@ class Showcase extends StatefulWidget {
   final double? height;
   final double? width;
   final Duration animationDuration;
+  final Duration tooltipAppearingDelay;
   final VoidCallback? onToolTipClick;
   final void Function(Rect)? onTargetClick;
   final bool? disposeOnTap;
@@ -93,6 +94,7 @@ class Showcase extends StatefulWidget {
     this.onTargetClick,
     this.disposeOnTap,
     this.animationDuration = const Duration(milliseconds: 2000),
+    this.tooltipAppearingDelay = Duration.zero,
     this.disableAnimation,
     this.contentPadding =
         const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -144,6 +146,7 @@ class Showcase extends StatefulWidget {
     this.onTargetClick,
     this.disposeOnTap,
     this.animationDuration = const Duration(milliseconds: 2000),
+    this.tooltipAppearingDelay = Duration.zero,
     this.disableAnimation,
     this.contentPadding = const EdgeInsets.symmetric(vertical: 8),
     this.overlayPadding = EdgeInsets.zero,
@@ -166,6 +169,7 @@ class Showcase extends StatefulWidget {
 
 class _ShowcaseState extends State<Showcase> {
   bool _showShowCase = false;
+  bool _showShowCaseTooltip = false;
   bool _isScrollRunning = false;
   bool _isHighlightingTargetRegion = false;
   Timer? timer;
@@ -188,8 +192,17 @@ class _ShowcaseState extends State<Showcase> {
   ///
   void showOverlay() {
     final activeStep = ShowCaseWidget.activeTargetWidget(context);
+    final showShowCase = activeStep == widget.key;
     setState(() {
-      _showShowCase = activeStep == widget.key;
+      _showShowCase = showShowCase;
+      if (showShowCase) {
+        _showShowCaseTooltip = false;
+      }
+    });
+    Future.delayed(widget.tooltipAppearingDelay, () {
+      setState(() {
+        _showShowCaseTooltip = showShowCase;
+      });
     });
 
     if (activeStep == widget.key) {
@@ -264,7 +277,10 @@ class _ShowcaseState extends State<Showcase> {
   void _getOnTooltipTap() {
     if (!widget.disableDisposeOnTooltipClick && widget.disposeOnTap == true) {
       showCaseWidgetState.dismiss();
+    } else if (widget.highlightTargetRegionWithColorOnBackgroundClick != null) {
+      _highlightTargetRegion();
     }
+
     widget.onToolTipClick?.call();
   }
 
@@ -290,17 +306,7 @@ class _ShowcaseState extends State<Showcase> {
                 onTap: widget.disableDisposeOnBackgroundClick
                     ? widget.highlightTargetRegionWithColorOnBackgroundClick !=
                             null
-                        ? () {
-                            setState(() {
-                              _isHighlightingTargetRegion = true;
-                            });
-                            Future.delayed(const Duration(milliseconds: 200),
-                                () {
-                              setState(() {
-                                _isHighlightingTargetRegion = false;
-                              });
-                            });
-                          }
+                        ? _highlightTargetRegion
                         : () {}
                     : _nextIfAny,
                 child: ClipPath(
@@ -373,10 +379,23 @@ class _ShowcaseState extends State<Showcase> {
                     _nextIfAny();
                     widget.onSkip?.call();
                   },
+                  showToolTip: _showShowCaseTooltip,
                 ),
             ],
           )
         : SizedBox.shrink();
+  }
+
+  void _highlightTargetRegion() {
+    setState(() {
+      _isHighlightingTargetRegion = true;
+      _showShowCaseTooltip = _showShowCase;
+    });
+    Future.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        _isHighlightingTargetRegion = false;
+      });
+    });
   }
 }
 
