@@ -268,7 +268,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
             ).animate(_curvedAnimation),
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 250),
-              opacity: widget.showToolTip ? 1.0 : 0.0,
+              opacity: widget.showToolTip ? 1.0 : 0,
               child: Material(
                 color: Colors.transparent,
                 child: Container(

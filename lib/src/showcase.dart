@@ -210,12 +210,19 @@ class _ShowcaseState extends State<Showcase> {
     });
     if (_showShowCaseTooltip != _showShowCase) {
       Future.delayed(widget.tooltipAppearingDelay, () {
-        if (widget.highlightTargetRegionWithColorOnBackgroundClick != null) {
-          _highlightTargetRegionAndShowTooltipIfNotShown();
-        } else {
-          setState(() {
-            _showShowCaseTooltip = showShowCase;
-          });
+        if (mounted) {
+          final stillShowShowCase =
+              ShowCaseWidget.activeTargetWidget(context) == widget.key;
+          if (stillShowShowCase) {
+            if (widget.highlightTargetRegionWithColorOnBackgroundClick !=
+                null) {
+              _highlightTargetRegionAndShowTooltipIfNotShown();
+            } else {
+              setState(() {
+                _showShowCaseTooltip = stillShowShowCase;
+              });
+            }
+          }
         }
       });
     }
@@ -405,15 +412,19 @@ class _ShowcaseState extends State<Showcase> {
   }
 
   void _highlightTargetRegionAndShowTooltipIfNotShown() {
-    setState(() {
-      _showShowCaseTooltip = _showShowCase;
-      _isHighlightingTargetRegion = true;
-    });
-    Future.delayed(const Duration(milliseconds: 200), () {
+    if (mounted) {
       setState(() {
-        _isHighlightingTargetRegion = false;
+        _showShowCaseTooltip = _showShowCase;
+        _isHighlightingTargetRegion = true;
       });
-    });
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (mounted) {
+          setState(() {
+            _isHighlightingTargetRegion = false;
+          });
+        }
+      });
+    }
   }
 }
 
