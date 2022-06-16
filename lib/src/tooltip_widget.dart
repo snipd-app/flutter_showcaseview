@@ -21,6 +21,7 @@
  */
 
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -48,6 +49,7 @@ class ToolTipWidget extends StatefulWidget {
   final bool canSkip;
   final bool showToolTip;
   final VoidCallback onSkip;
+  final List<BoxShadow>? boxShadow;
 
   ToolTipWidget({
     required this.position,
@@ -70,6 +72,7 @@ class ToolTipWidget extends StatefulWidget {
     required this.canSkip,
     required this.onSkip,
     required this.showToolTip,
+    this.boxShadow,
   });
 
   @override
@@ -277,6 +280,81 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                             ? Alignment.bottomRight
                             : Alignment.bottomLeft,
                     children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: isArrowUp ? arrowHeight - 1 : 0,
+                          bottom: isArrowUp ? 0 : arrowHeight - 1,
+                        ),
+                        child: GestureDetector(
+                          onTap: widget.onTooltipTap,
+                          child: Container(
+                            width: _getTooltipWidth(),
+                            padding: widget.contentPadding,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: widget.tooltipColor,
+                              boxShadow: widget.boxShadow,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        crossAxisAlignment: widget.title != null
+                                            ? CrossAxisAlignment.start
+                                            : CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          widget.title != null
+                                              ? Text(
+                                                  widget.title!,
+                                                  style:
+                                                      widget.titleTextStyle ??
+                                                          Theme.of(context)
+                                                              .textTheme
+                                                              .headline6!
+                                                              .merge(
+                                                                TextStyle(
+                                                                  color: widget
+                                                                      .textColor,
+                                                                ),
+                                                              ),
+                                                )
+                                              : SizedBox(),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            widget.description!,
+                                            style: widget.descTextStyle ??
+                                                Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle2!
+                                                    .merge(
+                                                      TextStyle(
+                                                        color: widget.textColor,
+                                                      ),
+                                                    ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                if (widget.canSkip)
+                                  GestureDetector(
+                                    onTap: widget.onSkip,
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                       if (widget.showArrow)
                         Positioned(
                           left: _getLeft() == null
@@ -303,82 +381,6 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                             ),
                           ),
                         ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: isArrowUp ? arrowHeight - 1 : 0,
-                          bottom: isArrowUp ? 0 : arrowHeight - 1,
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: GestureDetector(
-                            onTap: widget.onTooltipTap,
-                            child: Container(
-                              width: _getTooltipWidth(),
-                              padding: widget.contentPadding,
-                              color: widget.tooltipColor,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Column(
-                                          crossAxisAlignment:
-                                              widget.title != null
-                                                  ? CrossAxisAlignment.start
-                                                  : CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            widget.title != null
-                                                ? Text(
-                                                    widget.title!,
-                                                    style:
-                                                        widget.titleTextStyle ??
-                                                            Theme.of(context)
-                                                                .textTheme
-                                                                .headline6!
-                                                                .merge(
-                                                                  TextStyle(
-                                                                    color: widget
-                                                                        .textColor,
-                                                                  ),
-                                                                ),
-                                                  )
-                                                : SizedBox(),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              widget.description!,
-                                              style: widget.descTextStyle ??
-                                                  Theme.of(context)
-                                                      .textTheme
-                                                      .subtitle2!
-                                                      .merge(
-                                                        TextStyle(
-                                                          color:
-                                                              widget.textColor,
-                                                        ),
-                                                      ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  if (widget.canSkip)
-                                    GestureDetector(
-                                      onTap: widget.onSkip,
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.grey,
-                                      ),
-                                    )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

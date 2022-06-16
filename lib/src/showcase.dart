@@ -67,6 +67,7 @@ class Showcase extends StatefulWidget {
   final Color? highlightTargetRegionWithColorOnBackgroundClick;
   final bool canSkip;
   final VoidCallback? onSkip;
+  final List<BoxShadow>? tooltipBoxShadow;
 
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
@@ -109,6 +110,7 @@ class Showcase extends StatefulWidget {
     this.highlightTargetRegionWithColorOnBackgroundClick,
     this.canSkip = false,
     this.onSkip,
+    this.tooltipBoxShadow,
   })  : height = null,
         width = null,
         container = null,
@@ -158,6 +160,7 @@ class Showcase extends StatefulWidget {
     this.highlightTargetRegionWithColorOnBackgroundClick,
     this.canSkip = false,
     this.onSkip,
+    this.tooltipBoxShadow,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -351,6 +354,7 @@ class _ShowcaseState extends State<Showcase> {
                   onLongPress: widget.onTargetLongPress,
                   shapeBorder: widget.shapeBorder,
                   isHighlighted: _isHighlightingTargetRegion,
+                  hideBorder: !_showShowCaseTooltip,
                   highlightColor:
                       widget.highlightTargetRegionWithColorOnBackgroundClick,
                 ),
@@ -380,6 +384,7 @@ class _ShowcaseState extends State<Showcase> {
                     widget.onSkip?.call();
                   },
                   showToolTip: _showShowCaseTooltip,
+                  boxShadow: widget.tooltipBoxShadow,
                 ),
             ],
           )
@@ -409,6 +414,7 @@ class _TargetWidget extends StatelessWidget {
   final BorderRadius? radius;
   final bool isHighlighted;
   final Color? highlightColor;
+  final bool hideBorder;
 
   _TargetWidget({
     Key? key,
@@ -416,6 +422,7 @@ class _TargetWidget extends StatelessWidget {
     this.size,
     this.onTap,
     this.shapeBorder,
+    this.hideBorder = false,
     this.radius,
     this.onDoubleTap,
     this.onLongPress,
@@ -438,9 +445,11 @@ class _TargetWidget extends StatelessWidget {
             duration: const Duration(milliseconds: 250),
             height: size!.height + 16,
             width: size!.width + 16,
-            decoration: ShapeDecoration(
-              shape: _renderBorder(),
-            ),
+            decoration: hideBorder
+                ? null
+                : ShapeDecoration(
+                    shape: _renderBorder(),
+                  ),
           ),
         ),
       ),
