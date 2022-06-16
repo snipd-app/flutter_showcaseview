@@ -24,6 +24,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'showcase.dart';
 
 import 'get_position.dart';
 import 'measure_size.dart';
@@ -50,6 +51,7 @@ class ToolTipWidget extends StatefulWidget {
   final bool showToolTip;
   final VoidCallback onSkip;
   final List<BoxShadow>? boxShadow;
+  final TooltipOrientation? forcedOrientation;
 
   ToolTipWidget({
     required this.position,
@@ -72,6 +74,7 @@ class ToolTipWidget extends StatefulWidget {
     required this.canSkip,
     required this.onSkip,
     required this.showToolTip,
+    this.forcedOrientation,
     this.boxShadow,
   });
 
@@ -100,11 +103,11 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
         topPosition >= height;
   }
 
-  String findPositionForContent(Offset position) {
+  TooltipOrientation findPositionForContent(Offset position) {
     if (isCloseToTopOrBottom(position)) {
-      return 'ABOVE';
+      return TooltipOrientation.above;
     } else {
-      return 'BELOW';
+      return TooltipOrientation.below;
     }
   }
 
@@ -227,8 +230,10 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
   @override
   Widget build(BuildContext context) {
     position = widget.offset;
-    final contentOrientation = findPositionForContent(position!);
-    final contentOffsetMultiplier = contentOrientation == "BELOW" ? 1.0 : -1.0;
+    final contentOrientation =
+        widget.forcedOrientation ?? findPositionForContent(position!);
+    final contentOffsetMultiplier =
+        contentOrientation == TooltipOrientation.below ? 1.0 : -1.0;
     isArrowUp = contentOffsetMultiplier == 1.0;
 
     final contentY = isArrowUp

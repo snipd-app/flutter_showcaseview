@@ -32,6 +32,8 @@ import 'shape_clipper.dart';
 import 'showcase_widget.dart';
 import 'tooltip_widget.dart';
 
+enum TooltipOrientation { below, above }
+
 class Showcase extends StatefulWidget {
   @override
   final GlobalKey key;
@@ -68,6 +70,7 @@ class Showcase extends StatefulWidget {
   final bool canSkip;
   final VoidCallback? onSkip;
   final List<BoxShadow>? tooltipBoxShadow;
+  final TooltipOrientation? forcedTooltipOrientation;
 
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
@@ -111,6 +114,7 @@ class Showcase extends StatefulWidget {
     this.canSkip = false,
     this.onSkip,
     this.tooltipBoxShadow,
+    this.forcedTooltipOrientation,
   })  : height = null,
         width = null,
         container = null,
@@ -161,6 +165,7 @@ class Showcase extends StatefulWidget {
     this.canSkip = false,
     this.onSkip,
     this.tooltipBoxShadow,
+    this.forcedTooltipOrientation,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -392,6 +397,7 @@ class _ShowcaseState extends State<Showcase> {
                   },
                   showToolTip: _showShowCaseTooltip,
                   boxShadow: widget.tooltipBoxShadow,
+                  forcedOrientation: widget.forcedTooltipOrientation,
                 ),
             ],
           )
