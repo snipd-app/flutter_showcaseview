@@ -179,8 +179,13 @@ class _MailPageState extends State<MailPage> {
                                     Showcase(
                                       key: _one,
                                       title: 'Menu',
+                                      overlayOpacity: 0.2,
                                       description: 'Tap to see menu options',
                                       canSkip: true,
+                                      disableDisposeOnTooltipClick: true,
+                                      disableDisposeOnBackgroundClick: true,
+                                      highlightTargetRegionWithColorOnBackgroundClick:
+                                          Colors.amber,
                                       child: Icon(
                                         Icons.menu,
                                         color: Theme.of(context).primaryColor,

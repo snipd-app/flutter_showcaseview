@@ -63,6 +63,7 @@ class Showcase extends StatefulWidget {
   final VoidCallback? onTargetLongPress;
   final bool disableDisposeOnBackgroundClick;
   final bool disableDisposeOnTooltipClick;
+  final Color? highlightTargetRegionWithColorOnBackgroundClick;
   final bool canSkip;
   final VoidCallback? onSkip;
 
@@ -103,6 +104,7 @@ class Showcase extends StatefulWidget {
     this.onTargetDoubleTap,
     this.disableDisposeOnBackgroundClick = false,
     this.disableDisposeOnTooltipClick = false,
+    this.highlightTargetRegionWithColorOnBackgroundClick,
     this.canSkip = false,
     this.onSkip,
   })  : height = null,
@@ -150,6 +152,7 @@ class Showcase extends StatefulWidget {
     this.onTargetDoubleTap,
     this.disableDisposeOnBackgroundClick = false,
     this.disableDisposeOnTooltipClick = false,
+    this.highlightTargetRegionWithColorOnBackgroundClick,
     this.canSkip = false,
     this.onSkip,
   })  : showArrow = false,
@@ -164,6 +167,7 @@ class Showcase extends StatefulWidget {
 class _ShowcaseState extends State<Showcase> {
   bool _showShowCase = false;
   bool _isScrollRunning = false;
+  bool _isHighlightingTargetRegion = false;
   Timer? timer;
   GetPosition? position;
   ShowCaseWidgetState get showCaseWidgetState => ShowCaseWidget.of(context);
@@ -283,8 +287,22 @@ class _ShowcaseState extends State<Showcase> {
         ? Stack(
             children: [
               GestureDetector(
-                onTap:
-                    widget.disableDisposeOnBackgroundClick ? () {} : _nextIfAny,
+                onTap: widget.disableDisposeOnBackgroundClick
+                    ? widget.highlightTargetRegionWithColorOnBackgroundClick !=
+                            null
+                        ? () {
+                            setState(() {
+                              _isHighlightingTargetRegion = true;
+                            });
+                            Future.delayed(const Duration(milliseconds: 200),
+                                () {
+                              setState(() {
+                                _isHighlightingTargetRegion = false;
+                              });
+                            });
+                          }
+                        : () {}
+                    : _nextIfAny,
                 child: ClipPath(
                   clipper: RRectClipper(
                     area: _isScrollRunning ? Rect.zero : rectBound,
@@ -326,6 +344,9 @@ class _ShowcaseState extends State<Showcase> {
                   onDoubleTap: widget.onTargetDoubleTap,
                   onLongPress: widget.onTargetLongPress,
                   shapeBorder: widget.shapeBorder,
+                  isHighlighted: _isHighlightingTargetRegion,
+                  highlightColor:
+                      widget.highlightTargetRegionWithColorOnBackgroundClick,
                 ),
               if (!_isScrollRunning)
                 ToolTipWidget(
@@ -367,6 +388,8 @@ class _TargetWidget extends StatelessWidget {
   final VoidCallback? onLongPress;
   final ShapeBorder? shapeBorder;
   final BorderRadius? radius;
+  final bool isHighlighted;
+  final Color? highlightColor;
 
   _TargetWidget({
     Key? key,
@@ -377,6 +400,8 @@ class _TargetWidget extends StatelessWidget {
     this.radius,
     this.onDoubleTap,
     this.onLongPress,
+    this.isHighlighted = false,
+    this.highlightColor,
   }) : super(key: key);
 
   @override
@@ -390,22 +415,37 @@ class _TargetWidget extends StatelessWidget {
           onTap: onTap,
           onLongPress: onLongPress,
           onDoubleTap: onDoubleTap,
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
             height: size!.height + 16,
             width: size!.width + 16,
             decoration: ShapeDecoration(
-              shape: radius != null
-                  ? RoundedRectangleBorder(borderRadius: radius!)
-                  : shapeBorder ??
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                      ),
+              shape: _renderBorder(),
             ),
           ),
         ),
       ),
     );
+  }
+
+  ShapeBorder _renderBorder() {
+    final border = radius != null
+        ? RoundedRectangleBorder(
+            borderRadius: radius!,
+          )
+        : shapeBorder ??
+            const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            );
+    if (border is! RoundedRectangleBorder) {
+      return border;
+    }
+    return isHighlighted && highlightColor != null
+        ? RoundedRectangleBorder(
+            borderRadius: border.borderRadius,
+            side: BorderSide(color: highlightColor!, width: 10))
+        : border;
   }
 }
