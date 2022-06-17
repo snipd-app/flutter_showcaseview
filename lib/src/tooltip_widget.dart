@@ -52,6 +52,7 @@ class ToolTipWidget extends StatefulWidget {
   final VoidCallback onSkip;
   final List<BoxShadow>? boxShadow;
   final TooltipOrientation? forcedOrientation;
+  final double tooltipAdditionalSpacing;
 
   ToolTipWidget({
     required this.position,
@@ -76,6 +77,7 @@ class ToolTipWidget extends StatefulWidget {
     required this.showToolTip,
     this.forcedOrientation,
     this.boxShadow,
+    this.tooltipAdditionalSpacing = 0,
   });
 
   @override
@@ -256,7 +258,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
 
     if (widget.container == null) {
       return Positioned(
-        top: contentY,
+        top: contentY + widget.tooltipAdditionalSpacing,
         left: _getLeft(),
         right: _getRight(),
         child: FractionalTranslation(

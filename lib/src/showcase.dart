@@ -71,6 +71,7 @@ class Showcase extends StatefulWidget {
   final VoidCallback? onSkip;
   final List<BoxShadow>? tooltipBoxShadow;
   final TooltipOrientation? forcedTooltipOrientation;
+  final double tooltipAdditionalSpacing;
 
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
@@ -115,6 +116,7 @@ class Showcase extends StatefulWidget {
     this.onSkip,
     this.tooltipBoxShadow,
     this.forcedTooltipOrientation,
+    this.tooltipAdditionalSpacing = 0,
   })  : height = null,
         width = null,
         container = null,
@@ -166,6 +168,7 @@ class Showcase extends StatefulWidget {
     this.onSkip,
     this.tooltipBoxShadow,
     this.forcedTooltipOrientation,
+    this.tooltipAdditionalSpacing = 0,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -405,6 +408,7 @@ class _ShowcaseState extends State<Showcase> {
                   showToolTip: _showShowCaseTooltip,
                   boxShadow: widget.tooltipBoxShadow,
                   forcedOrientation: widget.forcedTooltipOrientation,
+                  tooltipAdditionalSpacing: widget.tooltipAdditionalSpacing,
                 ),
             ],
           )
