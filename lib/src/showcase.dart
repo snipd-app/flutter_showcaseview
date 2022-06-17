@@ -67,6 +67,7 @@ class Showcase extends StatefulWidget {
   final bool disableDisposeOnBackgroundClick;
   final bool disableDisposeOnTooltipClick;
   final Color? highlightTargetRegionWithColorOnBackgroundClick;
+  final void Function(TapDownDetails)? onBackgroundTapDownCallback;
   final bool canSkip;
   final VoidCallback? onSkip;
   final List<BoxShadow>? tooltipBoxShadow;
@@ -117,6 +118,7 @@ class Showcase extends StatefulWidget {
     this.tooltipBoxShadow,
     this.forcedTooltipOrientation,
     this.tooltipAdditionalSpacing = 0,
+    this.onBackgroundTapDownCallback,
   })  : height = null,
         width = null,
         container = null,
@@ -169,6 +171,7 @@ class Showcase extends StatefulWidget {
     this.tooltipBoxShadow,
     this.forcedTooltipOrientation,
     this.tooltipAdditionalSpacing = 0,
+    this.onBackgroundTapDownCallback,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -334,6 +337,7 @@ class _ShowcaseState extends State<Showcase> {
                         ? _highlightTargetRegionAndShowTooltipIfNotShown
                         : () {}
                     : _nextIfAny,
+                onTapDown: widget.onBackgroundTapDownCallback,
                 child: ClipPath(
                   clipper: RRectClipper(
                     area: _isScrollRunning ? Rect.zero : rectBound,

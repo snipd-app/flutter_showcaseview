@@ -316,22 +316,26 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                                             : CrossAxisAlignment.center,
                                         children: <Widget>[
                                           widget.title != null
-                                              ? Text(
-                                                  widget.title!,
-                                                  style:
-                                                      widget.titleTextStyle ??
-                                                          Theme.of(context)
-                                                              .textTheme
-                                                              .headline6!
-                                                              .merge(
-                                                                TextStyle(
-                                                                  color: widget
-                                                                      .textColor,
+                                              ? Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 6.0),
+                                                  child: Text(
+                                                    widget.title!,
+                                                    style:
+                                                        widget.titleTextStyle ??
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headline6!
+                                                                .merge(
+                                                                  TextStyle(
+                                                                    color: widget
+                                                                        .textColor,
+                                                                  ),
                                                                 ),
-                                                              ),
+                                                  ),
                                                 )
                                               : SizedBox(),
-                                          const SizedBox(height: 6),
                                           Text(
                                             widget.description!,
                                             style: widget.descTextStyle ??
