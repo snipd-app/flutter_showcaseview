@@ -58,7 +58,7 @@ class Showcase extends StatefulWidget {
   final Duration animationDuration;
   final Duration tooltipAppearingDelay;
   final VoidCallback? onToolTipClick;
-  final void Function(Rect)? onTargetClick;
+  final void Function(Rect, bool)? onTargetClick;
   final bool? disposeOnTap;
   final bool? disableAnimation;
   final EdgeInsets overlayPadding;
@@ -292,10 +292,10 @@ class _ShowcaseState extends State<Showcase> {
   void _getOnTargetTap(Rect targetRect) {
     if (widget.disposeOnTap == true) {
       showCaseWidgetState.dismiss();
-      widget.onTargetClick!.call(targetRect);
+      widget.onTargetClick!.call(targetRect, _showShowCaseTooltip);
     } else {
       if (widget.onTargetClick != null) {
-        widget.onTargetClick!.call(targetRect);
+        widget.onTargetClick!.call(targetRect, _showShowCaseTooltip);
       } else {
         _nextIfAny.call();
       }
@@ -326,7 +326,7 @@ class _ShowcaseState extends State<Showcase> {
     // Set blur to 0 if application is running on web and
     // provided blur is less than 0.
     blur = kIsWeb && blur < 0 ? 0 : blur;
-
+    print('_isScrollRunning = $_isScrollRunning');
     return _showShowCase
         ? Stack(
             children: [
@@ -470,6 +470,7 @@ class _TargetWidget extends StatelessWidget {
       child: FractionalTranslation(
         translation: const Offset(-0.5, -0.5),
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: onTap,
           onLongPress: onLongPress,
           onDoubleTap: onDoubleTap,
@@ -477,11 +478,8 @@ class _TargetWidget extends StatelessWidget {
             duration: const Duration(milliseconds: 250),
             height: size!.height + 16,
             width: size!.width + 16,
-            decoration: hideBorder
-                ? null
-                : ShapeDecoration(
-                    shape: _renderBorder(),
-                  ),
+            decoration:
+                hideBorder ? null : ShapeDecoration(shape: _renderBorder()),
           ),
         ),
       ),

@@ -184,6 +184,18 @@ class _MailPageState extends State<MailPage> {
                                       canSkip: true,
                                       disableDisposeOnTooltipClick: true,
                                       disableDisposeOnBackgroundClick: true,
+                                      disposeOnTap: true,
+                                      onTargetClick: (rect, tooltipShown) {
+                                        print('tooltipShown: $tooltipShown');
+                                        ShowCaseWidget.of(context)
+                                            .startShowCase([
+                                          _two,
+                                          _three,
+                                          _four,
+                                          _five,
+                                          _six
+                                        ]);
+                                      },
                                       tooltipAppearingDelay:
                                           const Duration(seconds: 5),
                                       highlightTargetRegionWithColorOnBackgroundClick:
@@ -318,7 +330,7 @@ class _MailPageState extends State<MailPage> {
           key: key,
           description: 'Tap to check mail',
           disposeOnTap: true,
-          onTargetClick: (rect) {
+          onTargetClick: (rect, tooltipShown) {
             Navigator.push<void>(
               context,
               MaterialPageRoute<void>(
