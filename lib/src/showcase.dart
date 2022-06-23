@@ -326,18 +326,21 @@ class _ShowcaseState extends State<Showcase> {
     // Set blur to 0 if application is running on web and
     // provided blur is less than 0.
     blur = kIsWeb && blur < 0 ? 0 : blur;
-    print('_isScrollRunning = $_isScrollRunning');
     return _showShowCase
         ? Stack(
             children: [
               GestureDetector(
-                onTap: widget.disableDisposeOnBackgroundClick
-                    ? widget.highlightTargetRegionWithColorOnBackgroundClick !=
-                            null
-                        ? _highlightTargetRegionAndShowTooltipIfNotShown
-                        : () {}
-                    : _nextIfAny,
-                onTapDown: widget.onBackgroundTapDownCallback,
+                onTap:
+                    widget.disableDisposeOnBackgroundClick ? () {} : _nextIfAny,
+                onTapDown: (details) {
+                  if (widget.disableDisposeOnBackgroundClick &&
+                      widget.highlightTargetRegionWithColorOnBackgroundClick !=
+                          null) {
+                    _highlightTargetRegionAndShowTooltipIfNotShown();
+                  } else {
+                    widget.onBackgroundTapDownCallback?.call(details);
+                  }
+                },
                 child: ClipPath(
                   clipper: RRectClipper(
                     area: _isScrollRunning ? Rect.zero : rectBound,
@@ -425,7 +428,7 @@ class _ShowcaseState extends State<Showcase> {
         _showShowCaseTooltip = _showShowCase;
         _isHighlightingTargetRegion = true;
       });
-      Future.delayed(const Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 400), () {
         if (mounted) {
           setState(() {
             _isHighlightingTargetRegion = false;
@@ -475,7 +478,7 @@ class _TargetWidget extends StatelessWidget {
           onLongPress: onLongPress,
           onDoubleTap: onDoubleTap,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
+            duration: const Duration(milliseconds: 400),
             height: size!.height + 16,
             width: size!.width + 16,
             decoration:
