@@ -21,13 +21,12 @@
  */
 
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'showcase.dart';
 
 import 'get_position.dart';
 import 'measure_size.dart';
+import 'showcase.dart';
 
 class ToolTipWidget extends StatefulWidget {
   final GetPosition? position;
@@ -117,12 +116,12 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
     final titleStyle = widget.titleTextStyle ??
         Theme.of(context)
             .textTheme
-            .headline6!
+            .titleLarge!
             .merge(TextStyle(color: widget.textColor));
     final descriptionStyle = widget.descTextStyle ??
         Theme.of(context)
             .textTheme
-            .subtitle2!
+            .titleSmall!
             .merge(TextStyle(color: widget.textColor));
     final titleLength = widget.title == null
         ? 0
@@ -326,7 +325,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                                                         widget.titleTextStyle ??
                                                             Theme.of(context)
                                                                 .textTheme
-                                                                .headline6!
+                                                                .titleLarge!
                                                                 .merge(
                                                                   TextStyle(
                                                                     color: widget
@@ -341,7 +340,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                                             style: widget.descTextStyle ??
                                                 Theme.of(context)
                                                     .textTheme
-                                                    .subtitle2!
+                                                    .titleSmall!
                                                     .merge(
                                                       TextStyle(
                                                         color: widget.textColor,

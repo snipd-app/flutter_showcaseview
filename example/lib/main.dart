@@ -186,7 +186,6 @@ class _MailPageState extends State<MailPage> {
                                       disableDisposeOnBackgroundClick: true,
                                       disposeOnTap: true,
                                       onTargetClick: (rect, tooltipShown) {
-                                        print('tooltipShown: $tooltipShown');
                                         ShowCaseWidget.of(context)
                                             .startShowCase([
                                           _two,
