@@ -74,6 +74,7 @@ class Showcase extends StatefulWidget {
   final TooltipOrientation? forcedTooltipOrientation;
   final double tooltipAdditionalSpacing;
   final bool autoScrollIntoView;
+  final Duration autoScrollDelay;
 
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
@@ -121,6 +122,7 @@ class Showcase extends StatefulWidget {
     this.tooltipAdditionalSpacing = 0,
     this.onBackgroundTapDownCallback,
     this.autoScrollIntoView = true,
+    this.autoScrollDelay = Duration.zero,
   })  : height = null,
         width = null,
         container = null,
@@ -175,6 +177,7 @@ class Showcase extends StatefulWidget {
     this.tooltipAdditionalSpacing = 0,
     this.onBackgroundTapDownCallback,
     this.autoScrollIntoView = true,
+    this.autoScrollDelay = Duration.zero,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -253,6 +256,7 @@ class _ShowcaseState extends State<Showcase> {
       setState(() {
         _isScrollRunning = true;
       });
+      await Future.delayed(widget.autoScrollDelay, () {});
       await Scrollable.ensureVisible(
         widget.key.currentContext!,
         duration: showCaseWidgetState.widget.scrollDuration,
