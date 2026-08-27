@@ -76,6 +76,16 @@ class Showcase extends StatefulWidget {
   final bool autoScrollIntoView;
   final Duration autoScrollDelay;
 
+  /// Caps the width of the default tooltip so long text wraps instead of
+  /// stretching to the edges of the screen. Unused by [Showcase.withWidget],
+  /// where the custom tooltip sizes itself.
+  final double? maxTooltipWidth;
+
+  /// Lets taps outside the target reach the app instead of being swallowed by
+  /// the overlay. The showcase then stays up until it is dismissed explicitly,
+  /// so pair it with [canSkip] or a dismissal of your own.
+  final bool allowBackgroundInteraction;
+
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
   ///
@@ -123,6 +133,8 @@ class Showcase extends StatefulWidget {
     this.onBackgroundTapDownCallback,
     this.autoScrollIntoView = true,
     this.autoScrollDelay = Duration.zero,
+    this.maxTooltipWidth,
+    this.allowBackgroundInteraction = false,
   })  : height = null,
         width = null,
         container = null,
@@ -178,8 +190,10 @@ class Showcase extends StatefulWidget {
     this.onBackgroundTapDownCallback,
     this.autoScrollIntoView = true,
     this.autoScrollDelay = Duration.zero,
+    this.allowBackgroundInteraction = false,
   })  : showArrow = false,
         onToolTipClick = null,
+        maxTooltipWidth = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
             "overlay opacity must be between 0 and 1.");
 
@@ -350,20 +364,31 @@ class _ShowcaseState extends State<Showcase> {
                     widget.onBackgroundTapDownCallback?.call(details);
                   }
                 },
-                child: ClipPath(
-                  clipper: RRectClipper(
-                    area: _isScrollRunning ? Rect.zero : rectBound,
-                    isCircle: widget.shapeBorder == CircleBorder(),
-                    radius:
-                        _isScrollRunning ? BorderRadius.zero : widget.radius,
-                    overlayPadding: _isScrollRunning
-                        ? EdgeInsets.zero
-                        : widget.overlayPadding,
-                  ),
-                  child: blur != 0
-                      ? BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                          child: Container(
+                child: IgnorePointer(
+                  ignoring: widget.allowBackgroundInteraction,
+                  child: ClipPath(
+                    clipper: RRectClipper(
+                      area: _isScrollRunning ? Rect.zero : rectBound,
+                      isCircle: widget.shapeBorder == CircleBorder(),
+                      radius:
+                          _isScrollRunning ? BorderRadius.zero : widget.radius,
+                      overlayPadding: _isScrollRunning
+                          ? EdgeInsets.zero
+                          : widget.overlayPadding,
+                    ),
+                    child: blur != 0
+                        ? BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              decoration: BoxDecoration(
+                                color: widget.overlayColor
+                                    .withOpacity(widget.overlayOpacity),
+                              ),
+                            ),
+                          )
+                        : Container(
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height,
                             decoration: BoxDecoration(
@@ -371,15 +396,7 @@ class _ShowcaseState extends State<Showcase> {
                                   .withOpacity(widget.overlayOpacity),
                             ),
                           ),
-                        )
-                      : Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          decoration: BoxDecoration(
-                            color: widget.overlayColor
-                                .withOpacity(widget.overlayOpacity),
-                          ),
-                        ),
+                  ),
                 ),
               ),
               if (_isScrollRunning) Center(child: widget.scrollLoadingWidget),
@@ -425,6 +442,7 @@ class _ShowcaseState extends State<Showcase> {
                   boxShadow: widget.tooltipBoxShadow,
                   forcedOrientation: widget.forcedTooltipOrientation,
                   tooltipAdditionalSpacing: widget.tooltipAdditionalSpacing,
+                  maxWidth: widget.maxTooltipWidth,
                 ),
             ],
           )

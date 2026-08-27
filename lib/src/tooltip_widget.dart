@@ -53,6 +53,10 @@ class ToolTipWidget extends StatefulWidget {
   final TooltipOrientation? forcedOrientation;
   final double tooltipAdditionalSpacing;
 
+  /// Caps the tooltip width so long text wraps instead of stretching to the
+  /// edges of the screen.
+  final double? maxWidth;
+
   ToolTipWidget({
     required this.position,
     required this.offset,
@@ -77,6 +81,7 @@ class ToolTipWidget extends StatefulWidget {
     this.forcedOrientation,
     this.boxShadow,
     this.tooltipAdditionalSpacing = 0,
+    this.maxWidth,
   });
 
   @override
@@ -134,6 +139,10 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
             widget.contentPadding!.left;
     var maxTextWidth = max(titleLength, descriptionLength).toDouble();
     final cancelButtonWidth = widget.canSkip ? 30.0 : 0;
+    final maxWidth = widget.maxWidth;
+    if (maxWidth != null) {
+      return min(maxTextWidth + 15 + cancelButtonWidth, maxWidth);
+    }
     if (maxTextWidth > widget.screenSize!.width - 20) {
       return widget.screenSize!.width - 20 + cancelButtonWidth;
     } else {
